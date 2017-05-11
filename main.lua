@@ -1,4 +1,3 @@
--- Asteroids game. Player travels on the field & collects coins. OK?
 require("player")
 
 MAX_RADIUS = 3 * 10^2
