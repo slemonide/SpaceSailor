@@ -34,8 +34,6 @@ function love.load()
 	playerScale = 1
 	planetScele = 1
 
-	timeScale = 1
-
 	time = 0
 
 	planets = {} -- To store planets and planetoids
@@ -54,109 +52,105 @@ function love.update(dt)
 		player.rotation = (player.rotation + player.angularSpeed * dt) % (2*math.pi)
 	end
 
-	count = 0
-	while count < timeScale do
-		time = time + dt
-		if player.active then
-			engine_noise:play()
-			if player.landed then -- Give it a little push
-				player.global_pos.x = player.global_pos.x + player.acceleration * math.sin(player.rotation)
-				player.global_pos.y = player.global_pos.y + player.acceleration * math.cos(player.rotation)
-			else
-				player.velocity.x = player.velocity.x + player.acceleration * dt^2 * math.sin(player.rotation) / 2
-				player.velocity.y = player.velocity.y + player.acceleration * dt^2 * math.cos(player.rotation) / 2
-			end
+	time = time + dt
+	if player.active then
+		engine_noise:play()
+		if player.landed then -- Give it a little push
+			player.global_pos.x = player.global_pos.x + player.acceleration * math.sin(player.rotation)
+			player.global_pos.y = player.global_pos.y + player.acceleration * math.cos(player.rotation)
 		else
-			engine_noise:stop()
+			player.velocity.x = player.velocity.x + player.acceleration * dt^2 * math.sin(player.rotation) / 2
+			player.velocity.y = player.velocity.y + player.acceleration * dt^2 * math.cos(player.rotation) / 2
 		end
-
-		player.global_pos.x = player.global_pos.x + player.velocity.x * dt
-		player.global_pos.y = player.global_pos.y + player.velocity.y * dt
-
-		table.insert(tracer, {
-			pos = {
-				x = player.global_pos.x,
-				y = player.global_pos.y
-			}
-		})
-
-		player.window_pos = { -- ALWAYS at the center of the screen
-			x = love.graphics.getWidth() / 2,
-			y = love.graphics.getHeight() / 2
-		}
-
-		-- Create stars
-		local star = {}
-			local createStar = true
-			star.pos = {
-				x = math.random(love.graphics.getWidth()),
-				y = math.random(love.graphics.getHeight())
-			}
-			for _, otherStar in ipairs(stars) do
-				if math.sqrt((otherStar.pos.x - star.pos.x)^2 + (otherStar.pos.y - star.pos.y)^2) < STAR_MIN_DISTANCE then
-					createStar = false
-				end
-			end
-			if createStar then
-				star.color = {math.random(155) + 100, math.random(155) + 100, math.random(155) + 100}
-				table.insert(stars, star)
-			end
-			-- Also delete some of the old stars
-			if math.random(100) == 1 then
-				table.remove(stars, math.random(#stars))
-			end
-
-		-- Create planets
-		local planet = {}
-			local createPlanet = true
-			planet.pos = {
-				x = player.global_pos.x + math.random(PLANET_GEN_DISTANCE) - PLANET_GEN_DISTANCE / 2,
-				y = player.global_pos.y + math.random(PLANET_GEN_DISTANCE) - PLANET_GEN_DISTANCE / 2
-			}
-			for _, otherPlanet in ipairs(planets) do
-				if math.sqrt((player.global_pos.x - planet.pos.x)^2 + (player.global_pos.y - planet.pos.y)^2) < PLANET_MIN_DISTANCE * 1.5
-				or math.sqrt((otherPlanet.pos.x - planet.pos.x)^2 + (otherPlanet.pos.y - planet.pos.y)^2) < PLANET_MIN_DISTANCE then
-					createPlanet = false
-				end
-			end
-			if createPlanet then
-				planet.color = {math.random(100) + 100, math.random(100) + 100, math.random(100) + 100}
-				planet.radius = math.random(MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS
-				planet.density = math.random(PLANET_DENSITY_MAX - PLANET_DENSITY_MIN) + PLANET_DENSITY_MIN
-				-- We assume that planets are spheres
-				planet.mass = planet.density * planet.radius * (4 / 3) * math.pi * planet.radius^3
-				table.insert(planets, planet)
-			end
-
-		local acceleration = {x = 0, y = 0}
-		for _, planet in ipairs(planets) do
-			local dx = planet.pos.x - player.global_pos.x
-			local dy = planet.pos.y - player.global_pos.y
-			local distance = hypot(dx, dy)
-			
-			if player_on_planet(player, planet, distance) then
-				player.landed = true
-				if player.alive then
-					if player.speed > MAX_SAFE_IMPACT_SPEED then
-						player.alive = false
-					end
-				end
-
-				acceleration = {x = 0, y = 0}
-				player.velocity.x = 0
-				player.velocity.y = 0
-			elseif not player_on_planet(player, planet, distance - 10) then
-				player.landed = false
-
-				acceleration.x = acceleration.x + GRAVITATIONAL_CONSTANT * planet.mass * dx / distance^3
-				acceleration.y = acceleration.y + GRAVITATIONAL_CONSTANT * planet.mass * dy / distance^3
-			end
-		end
-
-		player.velocity.x = player.velocity.x + acceleration.x * dt^2 / 2
-		player.velocity.y = player.velocity.y + acceleration.y * dt^2 / 2
-	count = count + 1
+	else
+		engine_noise:stop()
 	end
+
+	player.global_pos.x = player.global_pos.x + player.velocity.x * dt
+	player.global_pos.y = player.global_pos.y + player.velocity.y * dt
+
+	table.insert(tracer, {
+		pos = {
+			x = player.global_pos.x,
+			y = player.global_pos.y
+		}
+	})
+
+	player.window_pos = { -- ALWAYS at the center of the screen
+		x = love.graphics.getWidth() / 2,
+		y = love.graphics.getHeight() / 2
+	}
+
+	-- Create stars
+	local star = {}
+	local createStar = true
+	star.pos = {
+		x = math.random(love.graphics.getWidth()),
+		y = math.random(love.graphics.getHeight())
+	}
+	for _, otherStar in ipairs(stars) do
+		if math.sqrt((otherStar.pos.x - star.pos.x)^2 + (otherStar.pos.y - star.pos.y)^2) < STAR_MIN_DISTANCE then
+			createStar = false
+		end
+	end
+	if createStar then
+		star.color = {math.random(155) + 100, math.random(155) + 100, math.random(155) + 100}
+		table.insert(stars, star)
+	end
+	-- Also delete some of the old stars
+	if math.random(100) == 1 then
+		table.remove(stars, math.random(#stars))
+	end
+
+	-- Create planets
+	local planet = {}
+	local createPlanet = true
+	planet.pos = {
+		x = player.global_pos.x + math.random(PLANET_GEN_DISTANCE) - PLANET_GEN_DISTANCE / 2,
+		y = player.global_pos.y + math.random(PLANET_GEN_DISTANCE) - PLANET_GEN_DISTANCE / 2
+	}
+	for _, otherPlanet in ipairs(planets) do
+		if math.sqrt((player.global_pos.x - planet.pos.x)^2 + (player.global_pos.y - planet.pos.y)^2) < PLANET_MIN_DISTANCE * 1.5
+                or math.sqrt((otherPlanet.pos.x - planet.pos.x)^2 + (otherPlanet.pos.y - planet.pos.y)^2) < PLANET_MIN_DISTANCE then
+            createPlanet = false
+        end
+    end
+    if createPlanet then
+        planet.color = {math.random(100) + 100, math.random(100) + 100, math.random(100) + 100}
+        planet.radius = math.random(MAX_RADIUS - MIN_RADIUS) + MIN_RADIUS
+        planet.density = math.random(PLANET_DENSITY_MAX - PLANET_DENSITY_MIN) + PLANET_DENSITY_MIN
+        -- We assume that planets are spheres
+        planet.mass = planet.density * planet.radius * (4 / 3) * math.pi * planet.radius^3
+        table.insert(planets, planet)
+    end
+
+    local acceleration = {x = 0, y = 0}
+    for _, planet in ipairs(planets) do
+        local dx = planet.pos.x - player.global_pos.x
+        local dy = planet.pos.y - player.global_pos.y
+        local distance = hypot(dx, dy)
+			
+        if player_on_planet(player, planet, distance) then
+            player.landed = true
+            if player.alive then
+                if player.speed > MAX_SAFE_IMPACT_SPEED then
+                    player.alive = false
+                end
+            end
+
+            acceleration = {x = 0, y = 0}
+            player.velocity.x = 0
+            player.velocity.y = 0
+        elseif not player_on_planet(player, planet, distance - 10) then
+            player.landed = false
+
+            acceleration.x = acceleration.x + GRAVITATIONAL_CONSTANT * planet.mass * dx / distance^3
+            acceleration.y = acceleration.y + GRAVITATIONAL_CONSTANT * planet.mass * dy / distance^3
+        end
+    end
+
+    player.velocity.x = player.velocity.x + acceleration.x * dt^2 / 2
+    player.velocity.y = player.velocity.y + acceleration.y * dt^2 / 2
 end
 
 function love.draw()
@@ -186,8 +180,6 @@ function love.draw()
 		and y > -planet.radius and y < love.graphics.getHeight() + planet.radius then
 			love.graphics.setColor(planet.color)
 			love.graphics.circle("fill", x, y, planet.radius * planetScele)
-			--love.graphics.setColor(255, 255, 255)
-			--love.graphics.circle("line", x, y, planet.orbit * planetScele)
 		end
 	end
 
@@ -222,7 +214,6 @@ function love.draw()
 	end
 
 	love.graphics.print("ZOOM: " .. 1/scale .. "x", love.graphics.getWidth()/2, love.graphics.getHeight() - 40)
-	love.graphics.print("TIME SPEED: " .. timeScale .. "x", love.graphics.getWidth()/2, love.graphics.getHeight() - 20)
 end
 
 function love.keypressed(key)
@@ -269,15 +260,6 @@ function love.keypressed(key)
 		scale = 0.1
 		planetScele = 0.1
 		playerScale = 0.1
-
-	elseif key == "b" then
-		timeScale = 1
-	elseif key == "n" then
-		timeScale = 10
-	elseif key == "m" then
-		timeScale = 100
-	elseif key == "t" then
-		timeScale = 100
 	end
 end
 
