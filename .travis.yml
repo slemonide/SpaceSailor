@@ -5,7 +5,7 @@ addons:
   apt:
     packages:
     - lua5.1
-script: ./build.sh
+script: "./build.sh"
 
 deploy:
   provider: pages
