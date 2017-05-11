@@ -1,14 +1,5 @@
 require("player")
-
-MAX_RADIUS = 3 * 10^2
-MIN_RADIUS = 20
-GRAVITATIONAL_CONSTANT = 6.674 * 10^-11 * 10^9
-PLANET_DENSITY_MIN = 0.8
-PLANET_DENSITY_MAX = 3
-PLANET_GEN_DISTANCE = 2 * 10^4
-PLANET_MIN_DISTANCE = 4 * 10^3
-MAX_SAFE_IMPACT_SPEED = 50
-STAR_MIN_DISTANCE = 50
+require("conf")
 
 function love.load()
 	math.randomseed(os.time())
@@ -101,7 +92,7 @@ function love.update(dt)
 				x = math.random(love.graphics.getWidth()),
 				y = math.random(love.graphics.getHeight())
 			}
-			for i, otherStar in ipairs(stars) do
+			for _, otherStar in ipairs(stars) do
 				if math.sqrt((otherStar.pos.x - star.pos.x)^2 + (otherStar.pos.y - star.pos.y)^2) < STAR_MIN_DISTANCE then
 					createStar = false
 				end
@@ -111,11 +102,9 @@ function love.update(dt)
 				table.insert(stars, star)
 			end
 			-- Also delete some of the old stars
---[[
 			if math.random(100) == 1 then
 				table.remove(stars, math.random(#stars))
 			end
---]]
 
 		-- Create planets
 		local planet = {}
@@ -124,7 +113,7 @@ function love.update(dt)
 				x = player.global_pos.x + math.random(PLANET_GEN_DISTANCE) - PLANET_GEN_DISTANCE / 2,
 				y = player.global_pos.y + math.random(PLANET_GEN_DISTANCE) - PLANET_GEN_DISTANCE / 2
 			}
-			for i, otherPlanet in ipairs(planets) do
+			for _, otherPlanet in ipairs(planets) do
 				if math.sqrt((player.global_pos.x - planet.pos.x)^2 + (player.global_pos.y - planet.pos.y)^2) < PLANET_MIN_DISTANCE * 1.5
 				or math.sqrt((otherPlanet.pos.x - planet.pos.x)^2 + (otherPlanet.pos.y - planet.pos.y)^2) < PLANET_MIN_DISTANCE then
 					createPlanet = false
@@ -140,7 +129,7 @@ function love.update(dt)
 			end
 
 		local acceleration = {x = 0, y = 0}
-		for i, planet in ipairs(planets) do
+		for _, planet in ipairs(planets) do
 			local dx = planet.pos.x - player.global_pos.x
 			local dy = planet.pos.y - player.global_pos.y
 			local distance = hypot(dx, dy)
@@ -171,9 +160,8 @@ function love.update(dt)
 end
 
 function love.draw()
-	for i, star in ipairs(stars) do
+	for _, star in ipairs(stars) do
 		love.graphics.setColor(star.color)
---		love.graphics.points(star.pos.x, star.pos.y)
 		love.graphics.circle("fill", star.pos.x, star.pos.y, 1)
 	end
 
@@ -189,7 +177,7 @@ function love.draw()
 			player.inactiveImg:getHeight() / 2)
 	end
 
-	for i, planet in ipairs(planets) do
+	for _, planet in ipairs(planets) do
 		local x, y = global_to_local(planet.pos.x, planet.pos.y, player.global_pos.x, player.global_pos.y)
 		x = x * scale + player.window_pos.x
 		y = y * scale + player.window_pos.y
@@ -204,7 +192,7 @@ function love.draw()
 	end
 
 	if tracerShow then
-		for i, trace in ipairs(tracer) do
+		for _, trace in ipairs(tracer) do
 			local x, y = global_to_local(trace.pos.x, trace.pos.y, player.global_pos.x, player.global_pos.y)
 			x = x * scale + player.window_pos.x
 			y = y * scale + player.window_pos.y
@@ -219,20 +207,14 @@ function love.draw()
 
 	love.graphics.setColor(255, 255, 255)
 	local nearestPlanetDistance, nearestPlanet = nearest_planet(player.global_pos.x, player.global_pos.y, planets)
-	local planetSurfaceGravity = GRAVITATIONAL_CONSTANT * nearestPlanet.mass / nearestPlanet.radius^2
-	local planetEscapeVelocity = math.sqrt(planetSurfaceGravity * nearestPlanet.radius)
 	love.graphics.print("Position: x = " .. math.floor(player.global_pos.x)
 		.. ", y = " .. math.floor(player.global_pos.y) .. "\nRotation is "
 		.. math.floor(player.rotation / math.pi * 180) .. "°\n"
 		.. "Velocity: x = " .. math.floor(player.velocity.x)
 		.. ", y = " .. math.floor(player.velocity.y) .. "\nSpeed: "
 		.. math.floor(math.sqrt(player.velocity.y^2 + player.velocity.x^2)) .. " m/s"
---		.. "\nTotal number of planets: " .. #planets
 		.. "\nThe nearest planet is in " .. math.floor(nearestPlanetDistance)
 		.. " m\nIt's radius is " .. nearestPlanet.radius .. " m"
---		.. "\nGravity on its surface is " .. math.floor(planetSurfaceGravity) .. " m/s^2"
---		.. "\nIts escape velocity is " .. math.floor(planetEscapeVelocity) .. " m/s"
---		.. "\nNumber of stars: " .. #stars
 		.."\nTime passed: " .. math.floor(time) .. " seconds", 0, 0)
 	love.graphics.setColor(0, 255, 255)
 	if pause then
