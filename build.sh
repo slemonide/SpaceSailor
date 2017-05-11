@@ -11,5 +11,5 @@ function buildWindowsExe {
     cp love-0.10.2-win32/*dll .
 }
 
-createLoveFile
-buildWindowsExe
+#createLoveFile
+#buildWindowsExe
