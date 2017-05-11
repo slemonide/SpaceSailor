@@ -1,0 +1,6 @@
+*.love
+*.zip
+.idea/
+love-0.10.2-win32/
+*.dll
+*.exe
