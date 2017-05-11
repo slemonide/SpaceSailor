@@ -2,4 +2,4 @@
 A game about space exploration. Written on love2d.
 
 ## Usage
-This program requires love2d game engine to work (http://love2d.org/)
+Run `build.sh` to get Love file and a Windows executable.
