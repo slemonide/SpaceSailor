@@ -189,7 +189,7 @@ function love.draw()
 		love.graphics.print("PAUSED", love.graphics.getWidth() - 60, love.graphics.getHeight() - 20)
 	end
 
-	love.graphics.print("ZOOM: " .. 1/scale .. "x", love.graphics.getWidth()/2, love.graphics.getHeight() - 40)
+	love.graphics.print("ZOOM: " .. scale .. "x", love.graphics.getWidth()/2, love.graphics.getHeight() - 40)
 end
 
 function love.keypressed(key)
@@ -220,22 +220,18 @@ function love.keypressed(key)
 		else
 			love.window.setFullscreen(false)
 		end
-	elseif key == "z" then
+	elseif key == "0" then
 		scale = 1
 		planetScele = 1
 		playerScale = 1
-	elseif key == "x" then
-		scale = 0.5
-		planetScele = 0.5
-		playerScale = 0.5
-	elseif key == "c" then
-		scale = 0.25
-		planetScele = 0.25
-		playerScale = 0.25
-	elseif key == "v" then
-		scale = 0.1
-		planetScele = 0.1
-		playerScale = 0.1
+	elseif key == "-" then
+		scale = scale / 2
+        planetScele = planetScele / 2
+		playerScale = playerScale / 2
+	elseif key == "=" then
+		scale = scale * 2
+        planetScele = planetScele * 2
+		playerScale = playerScale * 2
 	end
 end
 
