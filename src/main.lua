@@ -22,28 +22,10 @@ function love.update(dt)
 		return
 	end
 
-	if love.keyboard.isDown("left", "a") then
-		player.rotation = (player.rotation - player.angularSpeed * dt) % (2*math.pi)
-	elseif love.keyboard.isDown("right","d") then
-		player.rotation = (player.rotation + player.angularSpeed * dt) % (2*math.pi)
-	end
+	player.handleKeys(dt)
+    player.tick(dt)
 
 	time = time + dt
-	if player.active then
-		ENGINE_NOISE:play()
-		if player.landed then -- Give it a little push
-			player.global_pos.x = player.global_pos.x + player.acceleration * math.sin(player.rotation)
-			player.global_pos.y = player.global_pos.y + player.acceleration * math.cos(player.rotation)
-		else
-			player.velocity.x = player.velocity.x + player.acceleration * dt^2 * math.sin(player.rotation) / 2
-			player.velocity.y = player.velocity.y + player.acceleration * dt^2 * math.cos(player.rotation) / 2
-		end
-	else
-		ENGINE_NOISE:stop()
-	end
-
-	player.global_pos.x = player.global_pos.x + player.velocity.x * dt
-	player.global_pos.y = player.global_pos.y + player.velocity.y * dt
 
 	table.insert(tracer, {
 		pos = {
