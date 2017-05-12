@@ -6,4 +6,4 @@ addons:
     packages:
     - lua5.1
 
-script: "./build.sh"
+script: "./build.sh build"
