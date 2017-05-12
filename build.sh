@@ -49,6 +49,11 @@ if [ "$1" == "clean" ]; then
     clean
 fi
 
+### validate
+if [ "$1" == "validate" ]; then
+    validate
+fi
+
 ### build
 if [ "$1" == "build" ]; then
     echo "Building LOVE file..."

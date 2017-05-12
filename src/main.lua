@@ -1,28 +1,10 @@
-require("player")
 require("conf")
+require("util")
+require("player")
 
 function love.load()
 	math.randomseed(os.time())
 	engine_noise = love.audio.newSource("assets/engine_noise.ogg", "static")
-
-	player = {}
-		player.acceleration = 10^4
-		player.angularSpeed = math.pi / 2
-		player.rotation = 0; -- Down the x axis (i.e. to the top of the screen)
-		player.activeImg = love.graphics.newImage('assets/rocket_active.png')
-		player.inactiveImg = love.graphics.newImage('assets/rocket_inactive.png')
-		player.active = false
-		player.global_pos = {
-			x = 0,
-			y = 0
-		}
-		player.velocity = {
-			x = 0,
-			y = 0
-		}
-		player.landed = false
-		player.alive = true
-		player.speed = 0
 
 	tracer = {} -- Contains tracing points
 	tracerRadius = 2

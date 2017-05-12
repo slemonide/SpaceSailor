@@ -1,42 +1,18 @@
-function hypot(dx, dy)
-	return math.sqrt(dx^2 + dy^2)
-end
-
-function global_to_local(x, y, origin_x, origin_y)
-	local local_x = x - origin_x
-	local local_y = origin_y - y
-
-	return local_x, local_y 
-end
-
-function nearest_planet(x, y, planets)
-	local candidate, key
-	for i, planet in ipairs(planets) do
-		local next_candidate = math.sqrt((planet.pos.x - x)^2 + (planet.pos.y - y)^2) - planet.radius
-		local next_key = i
-
-		if not candidate then
-			candidate = next_candidate
-		end
-		if not key then
-			key = next_key
-		end
-
-		if next_candidate < candidate then
-			candidate = next_candidate
-			key = next_key
-		end
-	end
-
-	return candidate, planets[key]
-end
-
-function player_on_planet(player, planet, distance)
-	local playerRadius = (player.inactiveImg:getHeight() + player.inactiveImg:getWidth()) / 2
-
-	if playerRadius + planet.radius - 30 >= distance then
-		return true
-	else
-		return false
-	end
-end
+player = {}
+player.acceleration = 10^4
+player.angularSpeed = math.pi / 2
+player.rotation = 0; -- Down the x axis (i.e. to the top of the screen)
+player.activeImg = love.graphics.newImage('assets/rocket_active.png')
+player.inactiveImg = love.graphics.newImage('assets/rocket_inactive.png')
+player.active = false
+player.global_pos = {
+    x = 0,
+    y = 0
+}
+player.velocity = {
+    x = 0,
+    y = 0
+}
+player.landed = false
+player.alive = true
+player.speed = 0
