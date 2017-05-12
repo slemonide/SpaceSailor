@@ -44,4 +44,9 @@ player.tick = function(dt)
 
     player.global_pos.x = player.global_pos.x + player.velocity.x * dt
     player.global_pos.y = player.global_pos.y + player.velocity.y * dt
+
+    player.window_pos = { -- ALWAYS at the center of the screen
+        x = love.graphics.getWidth() / 2,
+        y = love.graphics.getHeight() / 2
+    }
 end

@@ -25,19 +25,9 @@ function love.update(dt)
 	player.handleKeys(dt)
     player.tick(dt)
 
+    tracer.tick(player)
+
 	time = time + dt
-
-	table.insert(tracer, {
-		pos = {
-			x = player.global_pos.x,
-			y = player.global_pos.y
-		}
-	})
-
-	player.window_pos = { -- ALWAYS at the center of the screen
-		x = love.graphics.getWidth() / 2,
-		y = love.graphics.getHeight() / 2
-	}
 
 	-- Create stars
 	local star = {}
