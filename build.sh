@@ -4,6 +4,14 @@
 PROJECT_NAME="SpaceSailor"
 LOVE_VERSION="0.10.2"
 
+# Downloads required libraries
+function downloadLibraries {
+    mkdir "lib"
+    cd "lib"
+    wget "https://bitbucket.org/rude/love/downloads/love-${LOVE_VERSION}-win32.zip"
+    cd -
+}
+
 # Builds .love file
 function createLoveFile {
     mkdir "target"
@@ -49,6 +57,7 @@ fi
 
 ### build
 if [ "$1" == "build" ]; then
+    downloadLibraries
     createLoveFile
 fi
 #buildWindowsExe
