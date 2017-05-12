@@ -1,25 +1,19 @@
 require("conf")
 require("util")
 require("player")
+require("tracer")
 
 function love.load()
 	math.randomseed(os.time())
-	engine_noise = love.audio.newSource("assets/engine_noise.ogg", "static")
-
-	tracer = {} -- Contains tracing points
-	tracerRadius = 2
-	tracerColor = {255, 0, 0}
-	tracerShow = true
+    ENGINE_NOISE = love.audio.newSource("assets/engine_noise.ogg", "static")
 
 	pause = false
 	scale = 1
 	playerScale = 1
 	planetScele = 1
 
-	time = 0
-
+	time = 0 -- Time counter
 	planets = {} -- To store planets and planetoids
-
 	stars = {} -- Stores stars
 end
 
@@ -36,7 +30,7 @@ function love.update(dt)
 
 	time = time + dt
 	if player.active then
-		engine_noise:play()
+		ENGINE_NOISE:play()
 		if player.landed then -- Give it a little push
 			player.global_pos.x = player.global_pos.x + player.acceleration * math.sin(player.rotation)
 			player.global_pos.y = player.global_pos.y + player.acceleration * math.cos(player.rotation)
@@ -45,7 +39,7 @@ function love.update(dt)
 			player.velocity.y = player.velocity.y + player.acceleration * dt^2 * math.cos(player.rotation) / 2
 		end
 	else
-		engine_noise:stop()
+		ENGINE_NOISE:stop()
 	end
 
 	player.global_pos.x = player.global_pos.x + player.velocity.x * dt

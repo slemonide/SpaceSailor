@@ -1,3 +1,5 @@
+-- A player
+
 player = {}
 player.acceleration = 10^4
 player.angularSpeed = math.pi / 2
