@@ -1,6 +1,5 @@
 -- A tracer
---[[ Used for tracing paths
--- ]]
+-- Used for tracing paths
 
 tracer = {}
 tracerRadius = 2
